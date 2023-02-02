@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "@aws-amplify/ui-react/styles.css";
+import "./App.css";
+
+import { Authenticator } from "@aws-amplify/ui-react";
+import { Amplify, API } from "aws-amplify";
+import { GraphiQL } from "graphiql";
+import "graphiql/graphiql.min.css";
+import { AmplifyConfig } from "./Config";
+Amplify.configure(AmplifyConfig);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Authenticator
+      signUpAttributes={["email", "phone_number", "name"]}
+      loginMechanisms={["phone_number"]}
+    >
+      <GraphiQL fetcher={fetcher} />
+    </Authenticator>
   );
 }
-
+const fetcher = (graphqlParams: any) => {
+  return API.post("graphiql", "", {
+    body: graphqlParams,
+  })
+    .then((response) => response)
+    .catch((error) => error);
+};
 export default App;
